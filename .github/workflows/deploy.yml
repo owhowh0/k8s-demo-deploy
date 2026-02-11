@@ -8,6 +8,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      DOMAIN: ${{ secrets.DOMAIN }}
+      EMAIL: ${{ secrets.EMAIL }}
+      IMAGE: ghcr.io/yourusername/demo-app:latest
+      TLS_SECRET: demo-tls
+      NAMESPACE: default
 
     steps:
       - name: checkout repository
@@ -23,5 +29,6 @@ jobs:
 
       - name: deploy to k8s
         run: |
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
+          envsubst < k8s/deployment.yaml | kubectl apply -f -
+          envsubst < k8s/service.yaml | kubectl apply -f -
+          envsubst < k8s/ingress.yaml | kubectl apply -f -
