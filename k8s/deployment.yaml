@@ -17,6 +17,6 @@ spec:
         - name: demo
           image: hashicorp/http-echo:latest
           args:
-            - "-text=hello ilie"
+            - "-text=hello world"
           ports:
             - containerPort: 5678
