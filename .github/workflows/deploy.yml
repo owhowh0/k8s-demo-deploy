@@ -12,23 +12,25 @@ jobs:
       DOMAIN: ${{ secrets.DOMAIN }}
       EMAIL: ${{ secrets.EMAIL }}
       IMAGE: ghcr.io/yourusername/demo-app:latest
-      TLS_SECRET: demo-tls
+      TLS_SECRET: ${{ secrets.TLS_SECRET }}
       NAMESPACE: default
 
     steps:
-      - name: checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: install kubectl
+      - name: Install kubectl
         uses: azure/setup-kubectl@v3
 
-      - name: configure K8s access
+      - name: Configure K8s access
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
 
-      - name: deploy to k8s
+      - name: Deploy to Kubernetes
         run: |
           envsubst < k8s/deployment.yaml | kubectl apply -f -
           envsubst < k8s/service.yaml | kubectl apply -f -
+          envsubst < k8s/cluster-issuer.yaml | kubectl apply -f -
           envsubst < k8s/ingress.yaml | kubectl apply -f -
+
